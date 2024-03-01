@@ -2,38 +2,47 @@ import 'package:flutter/material.dart';
 
 class User {
   const User({
-     required this.name,
-     required this.lastName,
-     required this.address,
-     required this.rol,
-     required this.birthdate,
-     required this.userType,
-     required this.email,
-     required this.password,
-     required this.password_confirmation,
+    required this.name,
+    required this.lastName,
+    required this.address,
+    required this.birthdate,
+    required this.email,
+    required this.password,
+    required this.password_confirmation,
   });
+   const User.withEmailAndPassword({
+    required this.email,
+    required this.password,
+  
+  })  : password_confirmation = '',
+        name = '',
+        lastName = '',
+        address = '',
+        birthdate = '';
   final String name;
   final String lastName;
   final String address;
-  final String rol;
   final String birthdate;
-  final String userType;
   final String email;
   final String password;
   final String password_confirmation;
 
-   Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJsonRegister() {
     return {
       'name': name,
       'lastName': lastName,
       'address': address,
-      'rol': rol,
       'birthdate': birthdate,
-      'userType': userType,
       'email': email,
       'password': password,
       'password_confirmation': password_confirmation,
     };
   }
 
+  Map<String, dynamic> toJsonLogin() {
+     return {
+      'email': email,
+      'password': password,
+     };
+  }
 }

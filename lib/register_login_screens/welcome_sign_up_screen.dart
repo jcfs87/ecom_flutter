@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ecom_app/widgets/custom_button.dart';
-import 'package:ecom_app/register_login_screens/create_user_form.dart';
+import 'package:ecom_app/register_login_screens/first_personal_user_info.dart';
 import 'package:ecom_app/register_login_screens/welcome_sign_in_screen.dart';
 import 'package:ecom_app/methods/generic_methods.dart';
 
@@ -32,7 +32,7 @@ class WelcomeSignUpScreen extends StatelessWidget {
                 color: Colors.lightBlue,
                 text: 'Continuar con el email',
                 onTapButton: () {
-                  navigator(context, const CreateUserForm());
+                  navigator(context, const FirstPersonalUserInfo());
                 }),
             const SizedBox(
               height: 12,
@@ -41,7 +41,7 @@ class WelcomeSignUpScreen extends StatelessWidget {
                 color: Colors.indigo,
                 text: 'Continuar con google',
                 onTapButton: () {
-                  navigator(context, const CreateUserForm());
+                  navigator(context, const FirstPersonalUserInfo());
                 }),
             const SizedBox(
               height: 50,
