@@ -1,6 +1,6 @@
-import 'package:ecom_app/model/posts.dart';
+import 'package:ecom_app/model/posts_with_user_puntos.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'dart:io';
 
 class PostsItem extends StatelessWidget {
   const PostsItem({
@@ -8,32 +8,47 @@ class PostsItem extends StatelessWidget {
     required this.posts,
   });
 
-  final Posts posts;
+  final PostsWithUserAndTotalRating posts;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Column(
-          children: [
-            Text(
-              posts.title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+      color: const Color.fromARGB(255, 255, 255, 255),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: Column(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    posts.title!,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                   ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            Text(
-              posts.description,
-              textAlign: TextAlign.start,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  posts.created_at!,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
+          ),
         ),
       ),
     );

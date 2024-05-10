@@ -1,4 +1,5 @@
 import 'package:ecom_app/register_login_screens/login_user_form.dart';
+import 'package:ecom_app/widgets/custom_button.dart';
 import 'package:ecom_app/widgets/custom_password.dart';
 
 import 'package:flutter/material.dart';
@@ -157,28 +158,12 @@ class _ThirdPersonalUserInfo extends State<ThirdPersonalUserInfo> {
                       const SizedBox(
                         height: 300,
                       ),
-                      GestureDetector(
-                        onTap: () {
+                      CustomButton(
+                        color: Colors.lightBlue,
+                        text: 'Registrar',
+                        onTapButton: () {
                           _saveUser(context);
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.lightBlue,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'save',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
                       ),
                     ],
                   ),

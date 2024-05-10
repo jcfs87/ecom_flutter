@@ -1,9 +1,12 @@
+import 'package:ecom_app/screens/create_posts.dart';
 import 'package:ecom_app/screens/home_screen.dart';
 import 'package:ecom_app/screens/posts_screen.dart';
 import 'package:flutter/material.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+  const TabsScreen({super.key, required this.token,});
+
+  final String token;
 
   @override
   State<TabsScreen> createState() {
@@ -26,8 +29,8 @@ class _TabsScreenState extends State<TabsScreen> {
     var activePageTitle = 'Posts';
 
     if (_selectedPageIndex == 1) {
-      activePage = const HomeScreen();
-      activePageTitle = 'Home';
+      activePage =  CreatePosts(token: widget.token);
+      activePageTitle = 'Create posts';
     }
     return Scaffold(
       appBar: AppBar(
@@ -42,13 +45,6 @@ class _TabsScreenState extends State<TabsScreen> {
               icon: Icon(Icons.home_filled), label: 'Inicio'),
           BottomNavigationBarItem(
               icon: Icon(Icons.control_point_rounded), label: 'Publicar'),
-          // BottomNavigationBarItem(
-          //     icon: Icon(Icons.image_search_rounded),
-          //     label: 'Tus publicaciones'),
-          // BottomNavigationBarItem(
-          //     icon: Icon(Icons.history_sharp), label: 'Mensajes'),
-          // BottomNavigationBarItem(
-          //     icon: Icon(Icons.access_time_rounded), label: 'Perfil'),
         ],
       ),
     );

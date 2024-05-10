@@ -47,20 +47,3 @@ class User {
   }
 }
 
-class UserDummy extends User {
- final String imageUrl;
-
- UserDummy({
-  required String name,
-  required String imagen,
- })  : imageUrl = imagen,
-       super(
-        name: name,
-        lastName: '',
-        address: '',
-        birthdate: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-       );
-}

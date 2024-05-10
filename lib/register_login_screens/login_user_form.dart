@@ -1,10 +1,13 @@
 import 'package:ecom_app/screens/home_screen.dart';
+import 'package:ecom_app/screens/tap_screen.dart';
+import 'package:ecom_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:ecom_app/widgets/custom_text_form.dart';
 import 'package:ecom_app/widgets/custom_password.dart';
 import 'package:ecom_app/model/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginUserForm extends StatefulWidget {
   const LoginUserForm({super.key});
@@ -15,29 +18,29 @@ class LoginUserForm extends StatefulWidget {
   }
 }
 
-
 class _LoginUserFormState extends State<LoginUserForm> {
   final _formKey = GlobalKey<FormState>();
   var _email = '';
   var _password = '';
+  var _token = '';
 
-  
-void _loginUser() async {
-  try{
-     final navContext = context;
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      print('Login User');
-      print(_email);
-      print(_password);
+  void _loginUser() async {
+    try {
+      final navContext = context;
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+        print('Login User');
+        print(_email);
+        print(_password);
 
-      User user =  User.withEmailAndPassword(email: _email, password: _password);
+        User user =
+            User.withEmailAndPassword(email: _email, password: _password);
 
-      String jsonBody = json.encode(user.toJsonLogin());
-      print('JSON enviado al servidor:');
-      print(jsonBody);
+        String jsonBody = json.encode(user.toJsonLogin());
+        print('JSON enviado al servidor:');
+        print(jsonBody);
 
-       final url = Uri.parse('http://10.0.2.2:8000/api/login');
+        final url = Uri.parse('http://10.0.2.2:8000/api/login');
         final response = await http.post(
           url,
           headers: {
@@ -46,11 +49,23 @@ void _loginUser() async {
           body: jsonBody,
         );
 
-        if (response.statusCode == 201) {
-         Navigator.of(navContext).push(
+        if (response.statusCode == 200) {
+          final responseData = json.decode(response.body);
+
+          String token = responseData['token'];
+          SharedPreferences localStorage =
+              await SharedPreferences.getInstance();
+          await localStorage.setString('token', token);
+          if (token != null && token.isNotEmpty) {
+            print('Token guardado: $token');
+            _token = token;
+          } else {
+            print('Token no válido: $token');
+          }
+          Navigator.of(navContext).push(
             MaterialPageRoute(
               builder: (BuildContext context) {
-                return const HomeScreen();
+                return  TabsScreen(token: _token,);
               },
             ),
           );
@@ -60,11 +75,12 @@ void _loginUser() async {
           print('Respuesta: ${response.body}');
           print('Sending request to: $url');
         }
+      }
+    } catch (e) {
+      print('Error en la solicitud: $e');
     }
-  } catch (e) {
-    print('Error en la solicitud: $e');
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,28 +144,12 @@ void _loginUser() async {
                       const SizedBox(
                         height: 300,
                       ),
-                      GestureDetector(
-                        onTap: () {
+                      CustomButton(
+                        color: Colors.lightBlue,
+                        text: 'Iniciar sesión',
+                        onTapButton: () {
                           _loginUser();
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.lightBlue,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'save',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
                       ),
                     ],
                   ),
