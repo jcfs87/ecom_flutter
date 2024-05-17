@@ -10,13 +10,13 @@ class CustomTextForm extends StatelessWidget {
       required this.textValidator,
       required this.typeField,
       required this.oscuredText,
-      required this.prefixIcon});
+      this.prefixIcon});
   final String hinText;
   final void Function(String?)? onSaved;
   final String textValidator;
   final String typeField;
   final bool oscuredText;
-  final Icon prefixIcon;
+  final Icon? prefixIcon;
 
   String? _validateField(String? value) {
     switch (typeField) {
@@ -41,10 +41,9 @@ class CustomTextForm extends StatelessWidget {
       color: const Color.fromARGB(77, 232, 228, 228),
       child: TextFormField(
         obscureText: oscuredText,
-       
         decoration: InputDecoration(
           hintText: hinText,
-           prefixIcon: prefixIcon,
+          prefixIcon: prefixIcon,
 
           contentPadding: const EdgeInsets.fromLTRB(30, 15, 30, 15),
           enabledBorder: OutlineInputBorder(

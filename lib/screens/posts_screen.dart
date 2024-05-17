@@ -7,7 +7,11 @@ import 'dart:convert';
 
 class PostsScreen extends StatefulWidget {
   const PostsScreen({
-    super.key});
+    super.key,
+    this.title,
+  });
+
+  final String? title;
 
   @override
   State<PostsScreen> createState() => _PostsScreenState();
@@ -76,8 +80,11 @@ class _PostsScreenState extends State<PostsScreen> {
         itemBuilder: (ctx, index) => PostsItem(posts: _postsItems[index]),
       );
     }
-    return Scaffold(
-      body: content,
-    );
+    if (_error != null) {
+      content = Center(child: Text(_error!));
+    }
+    
+    
+    return content;
   }
 }

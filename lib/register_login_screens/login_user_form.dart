@@ -1,4 +1,3 @@
-import 'package:ecom_app/screens/home_screen.dart';
 import 'package:ecom_app/screens/tap_screen.dart';
 import 'package:ecom_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -8,76 +7,89 @@ import 'package:ecom_app/model/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ecom_app/providers/token.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginUserForm extends StatefulWidget {
+class LoginUserForm extends ConsumerStatefulWidget {
   const LoginUserForm({super.key});
 
   @override
-  State<LoginUserForm> createState() {
+  ConsumerState<LoginUserForm> createState() {
     return _LoginUserFormState();
   }
 }
 
-class _LoginUserFormState extends State<LoginUserForm> {
+class _LoginUserFormState extends ConsumerState<LoginUserForm> {
   final _formKey = GlobalKey<FormState>();
+
   var _email = '';
   var _password = '';
-  var _token = '';
+  bool _isConnect = false;
+  String? _error;
 
   void _loginUser() async {
     try {
       final navContext = context;
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
-        print('Login User');
-        print(_email);
-        print(_password);
+
+        setState(() {
+          _isConnect = true;
+        });
 
         User user =
             User.withEmailAndPassword(email: _email, password: _password);
 
         String jsonBody = json.encode(user.toJsonLogin());
-        print('JSON enviado al servidor:');
-        print(jsonBody);
 
         final url = Uri.parse('http://10.0.2.2:8000/api/login');
-        final response = await http.post(
-          url,
-          headers: {
-            'Content-type': 'application/json',
-          },
-          body: jsonBody,
-        );
+        final response = await http
+            .post(
+              url,
+              headers: {
+                'Content-type': 'application/json',
+              },
+              body: jsonBody,
+            )
+            .timeout(const Duration(seconds: 10));
 
-        if (response.statusCode == 200) {
+        if (response.statusCode >= 400) {
+          setState(() {
+            _error = 'Failed to fetch data. Please try again later';
+          });
+          return;
+        } else {
           final responseData = json.decode(response.body);
 
-          String token = responseData['token'];
+          String tokenFromBack = responseData['token'];
+         
           SharedPreferences localStorage =
               await SharedPreferences.getInstance();
-          await localStorage.setString('token', token);
-          if (token != null && token.isNotEmpty) {
-            print('Token guardado: $token');
-            _token = token;
-          } else {
-            print('Token no válido: $token');
+          await localStorage.setString('token', tokenFromBack);
+          if (tokenFromBack.isNotEmpty) {
+            ref.watch(tokenProvider.notifier).state = tokenFromBack;
           }
-          Navigator.of(navContext).push(
+          
+          Navigator.of(navContext).pushReplacement(
             MaterialPageRoute(
               builder: (BuildContext context) {
-                return  TabsScreen(token: _token,);
+                return const TabsScreen();
               },
             ),
           );
-        } else {
-          print(
-              'Error al hacer login. Código de estado: ${response.statusCode}');
-          print('Respuesta: ${response.body}');
-          print('Sending request to: $url');
         }
       }
-    } catch (e) {
-      print('Error en la solicitud: $e');
+    } catch (error) {
+      setState(() {
+        // Si la excepción indica una falta de conexión con el servidor
+        if (error is http.ClientException) {
+          _error =
+              'No connection to the server. Please check your internet connection and try again.';
+          return;
+        } else {
+          _error = 'Something went wrong! Please try again later';
+        }
+      });
     }
   }
 
@@ -144,16 +156,42 @@ class _LoginUserFormState extends State<LoginUserForm> {
                       const SizedBox(
                         height: 300,
                       ),
-                      CustomButton(
-                        color: Colors.lightBlue,
-                        text: 'Iniciar sesión',
-                        onTapButton: () {
-                          _loginUser();
-                        },
+                      ElevatedButton(
+                        onPressed: _isConnect ? null : _loginUser,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.lightBlue,
+                            shadowColor: Colors.blueAccent,
+                            minimumSize: const Size(120, 60)),
+                        child: _isConnect
+                            ? const SizedBox(
+                                child: CircularProgressIndicator(),
+                              )
+                            : const Text(
+                                'Login',
+                                style: TextStyle(color: Colors.white),
+                              ),
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      if (_error != null)
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            _error!,
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(
+                                  color: const Color.fromARGB(249, 239, 5, 5),
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
+                                ),
+                          ),
+                        ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
