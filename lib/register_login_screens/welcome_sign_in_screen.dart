@@ -16,8 +16,17 @@ class WelcomeSignInScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
-              height: 50,
+              height: 20,
             ),
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.close),
+            ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
             Text(
               '¿Cómo quieres\niniciar sesión?',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(

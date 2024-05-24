@@ -20,28 +20,32 @@ class TabsScreen extends ConsumerStatefulWidget {
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
 
-  bool checkLoginStatus() {
+  void _checkLoginAndNavigate() {
+    if (_selectedPageIndex == 1 || _selectedPageIndex == 2) {
+      if (!_checkLoginStatus()) {
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (context) => const WelcomeSignInScreen()).then((_) {
+          setState(() {
+            _selectedPageIndex =
+                0; // Redirigir a la pestaña de inicio si no está autenticado
+          });
+        });
+      }
+    }
+  }
+
+  bool _checkLoginStatus() {
     var tokenProvi = ref.watch(tokenProvider.notifier).state;
-    return tokenProvi !=null;
+    return tokenProvi != null;
   }
 
   void _selectPage(int index) {
     setState(() {
       _selectedPageIndex = index;
     });
-
-    if (_selectedPageIndex == 1 || _selectedPageIndex == 2) {
-      // Check login status here
-      bool isLoggedIn = checkLoginStatus(); // Implement this method
-
-      if (!isLoggedIn) {
-        // If not logged in, navigate to login screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomeSignInScreen()),
-        );
-      }
-    }
+    // _checkLoginAndNavigate();
   }
 
   @override
@@ -57,8 +61,8 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-      title: Text(activePageTitle),
-      automaticallyImplyLeading: false,
+        title: Text(activePageTitle),
+        // automaticallyImplyLeading: false,
       ),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(

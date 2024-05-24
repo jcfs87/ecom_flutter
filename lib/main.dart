@@ -5,11 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final theme = ThemeData(
-  // colorScheme: ColorScheme.fromSeed(
-  //   brightness: Brightness.dark,
-  //   seedColor: const Color.fromARGB(255, 131, 57, 0),
-  // ),
   textTheme: GoogleFonts.latoTextTheme(),
+  dividerTheme: const DividerThemeData(
+    space: 50,
+    color: Colors.grey
+  )
 );
 void main() {
   runApp(
